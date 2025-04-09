@@ -1,16 +1,27 @@
-package com.example.demo.utility.responseHandler;
+package com.example.demo.utility.responseHandler.responseClasses;
 
 import org.springframework.http.HttpStatus;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DataResponse<T> {
-    private boolean isSuccess = true;
+    @Getter(onMethod_ = { @JsonProperty("isSuccess") })
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    private final boolean isSuccess = true;
+
     private T data;
-    private HttpStatus responseCode;
+    private int responseCode;
 }
