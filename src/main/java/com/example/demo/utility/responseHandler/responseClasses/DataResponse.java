@@ -1,7 +1,5 @@
 package com.example.demo.utility.responseHandler.responseClasses;
 
-import org.springframework.http.HttpStatus;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;
