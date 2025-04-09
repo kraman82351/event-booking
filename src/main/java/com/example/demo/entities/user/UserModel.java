@@ -1,4 +1,4 @@
-package com.example.demo.entities;
+package com.example.demo.entities.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,18 +7,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Data
 public class UserModel {
 
     @Id

@@ -1,0 +1,58 @@
+package com.example.demo.utility.responseHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.example.demo.utility.responseHandler.responseClasses.FailureResponse;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+
+@ControllerAdvice
+public class GlobalControllerExceptionHandler {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<FailureResponse> handleHttpMessageNotResponseException(
+            final HttpMessageNotReadableException exception) {
+
+        String errorMessage = "Malformed JSON request";
+
+        if (exception.getCause() instanceof InvalidFormatException formatException) {
+            errorMessage = "Invalid value for field - " + formatException.getPath().get(0).getFieldName() + ": "
+                    + formatException.getValue() + " - " + formatException.getOriginalMessage();
+        }
+
+        return ResponseHandler.failure("Error", "Validation Error",
+                HttpStatus.BAD_REQUEST, errorMessage, "E002");
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<FailureResponse> handleMethodArgumentNotValidException(
+            final MethodArgumentNotValidException exception) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        exception.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+        System.out.println(exception);
+
+        return ResponseHandler.failure("Error", "Validation Error",
+                HttpStatus.UNPROCESSABLE_ENTITY, errors, "E002");
+    }
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<FailureResponse> handleInternalServerException(final Exception exception) {
+        return ResponseHandler.failure("Error", exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null, "E001");
+    }
+
+}

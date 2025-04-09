@@ -2,8 +2,10 @@ package com.example.demo.utility.responseHandler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 
 import com.example.demo.utility.responseHandler.responseClasses.DataResponse;
+import com.example.demo.utility.responseHandler.responseClasses.FailureResponse;
 import com.example.demo.utility.responseHandler.responseClasses.SuccessResponse;
 
 public class ResponseHandler {
@@ -14,5 +16,16 @@ public class ResponseHandler {
 
     public static <T> ResponseEntity<DataResponse<T>> data(T data, HttpStatus status) {
         return new ResponseEntity<>(DataResponse.<T>builder().responseCode(status.value()).data(data).build(), status);
+    }
+
+    public static ResponseEntity<FailureResponse> failure(String message,
+            Object error,
+            HttpStatus status,
+            @Nullable Object data,
+            @Nullable String errorCode) {
+        return new ResponseEntity<>(
+                FailureResponse.builder().responseCode(status.value()).message(message).error((error)).data(data)
+                        .errorCode(errorCode).build(),
+                status);
     }
 }
