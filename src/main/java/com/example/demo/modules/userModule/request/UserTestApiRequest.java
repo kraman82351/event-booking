@@ -1,4 +1,4 @@
-package com.example.demo.modules.user.request;
+package com.example.demo.modules.userModule.request;
 
 import java.util.List;
 
