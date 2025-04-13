@@ -8,15 +8,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.modules.userModule.request.CreateUserApiRequest;
 import com.example.demo.modules.userModule.request.UserTestApiRequest;
+import com.example.demo.modules.userModule.service.UserService;
+import com.example.demo.modules.userModule.service.UserServiceImpl;
 import com.example.demo.utility.responseHandler.ResponseHandler;
 import com.example.demo.utility.responseHandler.responseClasses.SuccessResponse;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("user")
 public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserServiceImpl userService) {
+        this.userService = userService;
+    }
 
     @GetMapping()
     public ResponseEntity<SuccessResponse> helloWorld() {
@@ -28,6 +37,14 @@ public class UserController {
     public ResponseEntity<SuccessResponse> testing(@Valid @RequestBody UserTestApiRequest userTestApiRequest) {
         String message = "Success!";
         return ResponseHandler.success(message, HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity<SuccessResponse> testing(@Valid @RequestBody CreateUserApiRequest createUserApiRequest) {
+        this.userService.createUser(createUserApiRequest.getName(), createUserApiRequest.getEmail(),
+                createUserApiRequest.getPassword());
+
+        return ResponseHandler.success("Success", HttpStatus.OK);
     }
 
 }
