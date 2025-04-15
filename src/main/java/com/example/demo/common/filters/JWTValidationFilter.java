@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.common.filters;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.demo.common.authenticationToken.JWTAuthenticationToken;
+import com.example.demo.common.token.JWTAuthenticationToken;
 import com.example.demo.utility.jwtUtils.JWTUtil;
 
 import jakarta.servlet.FilterChain;
@@ -32,7 +32,6 @@ public class JWTValidationFilter extends OncePerRequestFilter {
         String token = jwtUtil.extractJwtFromRequest(request);
 
         if (token != null) {
-
             JWTAuthenticationToken jwtAuthenticationToken = new JWTAuthenticationToken(token);
             Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);
 

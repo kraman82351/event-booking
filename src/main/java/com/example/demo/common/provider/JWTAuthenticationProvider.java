@@ -1,4 +1,4 @@
-package com.example.demo.common.authenticationProvider;
+package com.example.demo.common.provider;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -6,7 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-import com.example.demo.common.authenticationToken.JWTAuthenticationToken;
+import com.example.demo.common.token.JWTAuthenticationToken;
 import com.example.demo.modules.userModule.core.UserAuthDetails;
 import com.example.demo.modules.userModule.service.UserDetailsServiceImpl;
 import com.example.demo.utility.jwtUtils.JWTUtil;

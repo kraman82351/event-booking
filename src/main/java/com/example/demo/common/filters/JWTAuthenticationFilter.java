@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.common.filters;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,4 +1,4 @@
-package com.example.demo.common.authenticationToken;
+package com.example.demo.common.token;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
