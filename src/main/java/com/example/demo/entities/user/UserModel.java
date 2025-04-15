@@ -42,4 +42,5 @@ public class UserModel {
 
     // @Column(name = "tickets", nullable = false)
     // private List<TicketModel> tickets;
+
 }

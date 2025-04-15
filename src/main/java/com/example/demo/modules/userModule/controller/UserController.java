@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.modules.userModule.request.CreateUserApiRequest;
+import com.example.demo.modules.userModule.request.UserLoginRequest;
 import com.example.demo.modules.userModule.request.UserTestApiRequest;
 import com.example.demo.modules.userModule.service.UserService;
 import com.example.demo.modules.userModule.service.UserServiceImpl;
@@ -37,14 +38,6 @@ public class UserController {
     public ResponseEntity<SuccessResponse> testing(@Valid @RequestBody UserTestApiRequest userTestApiRequest) {
         String message = "Success!";
         return ResponseHandler.success(message, HttpStatus.OK);
-    }
-
-    @PostMapping()
-    public ResponseEntity<SuccessResponse> testing(@Valid @RequestBody CreateUserApiRequest createUserApiRequest) {
-        this.userService.createUser(createUserApiRequest.getName(), createUserApiRequest.getEmail(),
-                createUserApiRequest.getPassword());
-
-        return ResponseHandler.success("Success", HttpStatus.OK);
     }
 
 }

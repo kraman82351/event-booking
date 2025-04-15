@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,8 +30,19 @@ public class GlobalControllerExceptionHandler {
                     + formatException.getValue() + " - " + formatException.getOriginalMessage();
         }
 
-        return ResponseHandler.failure("Error", "Validation Error",
+        return ResponseHandler.failure("Error", "Bad Request",
                 HttpStatus.BAD_REQUEST, errorMessage, "E002");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<FailureResponse> handleBadCredentialsException(
+            final BadCredentialsException exception) {
+
+        String errorMessage = "Bad Credentials";
+
+        return ResponseHandler.failure("Invalid Credentials", "Invalid Credentials",
+                HttpStatus.UNAUTHORIZED, errorMessage, "E003");
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
