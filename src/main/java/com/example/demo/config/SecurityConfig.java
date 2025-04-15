@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.demo.common.authenticationProvider.JWTAuthenticationProvider;
 import com.example.demo.modules.userModule.service.UserDetailsServiceImpl;
 import com.example.demo.utility.jwtUtils.JWTUtil;
 
@@ -39,12 +40,13 @@ public class SecurityConfig {
 
     @Bean
     @SuppressWarnings("unused")
-    AuthenticationManager authenticationManager() {
-        return new ProviderManager(Arrays.asList(daoAuthenticationProvider()));
+    JWTAuthenticationProvider jwtAuthenticationProvider() {
+        return new JWTAuthenticationProvider(jwtUtil, (UserDetailsServiceImpl) userDetailsService);
     }
 
     @Bean
     @SuppressWarnings("unused")
+
     DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
@@ -54,10 +56,17 @@ public class SecurityConfig {
 
     @Bean
     @SuppressWarnings("unused")
+    AuthenticationManager authenticationManager() {
+        return new ProviderManager(Arrays.asList(daoAuthenticationProvider(), jwtAuthenticationProvider()));
+    }
+
+    @Bean
+    @SuppressWarnings("unused")
     SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager,
             JWTUtil jwtUtil) throws Exception {
 
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager, jwtUtil);
+        JWTValidationFilter jwtValidationFilter = new JWTValidationFilter(authenticationManager, jwtUtil);
 
         return http
                 .csrf(csrf -> csrf.disable())
@@ -66,6 +75,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtValidationFilter, JWTAuthenticationFilter.class)
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
                 .build();
     }
 

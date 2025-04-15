@@ -1,18 +1,22 @@
 package com.example.demo.utility.passwordUtils;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PasswordEncryptUtils {
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
+
+    public PasswordEncryptUtils(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String encryptPassword(String password) {
-        return bCryptPasswordEncoder.encode(password);
+        return passwordEncoder.encode(password);
     }
 
     public Boolean checkPassword(String password, String hashedPassword) {
-        return bCryptPasswordEncoder.matches(password, hashedPassword);
+        return passwordEncoder.matches(password, hashedPassword);
     }
 }

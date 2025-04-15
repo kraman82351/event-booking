@@ -67,7 +67,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
             response.addCookie(tokenCookie);
             response.addCookie(refreshTokenCookie);
-
         }
 
     }

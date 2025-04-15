@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.modules.userModule.core.UserAuthDetails;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JWTUtil {
@@ -23,7 +25,7 @@ public class JWTUtil {
     public String generateToken(UserAuthDetails userAuthDetails, long expiryMinutes) {
         return Jwts.builder()
                 .subject(userAuthDetails.getUsername())
-                .claims(Map.of("id", userAuthDetails.getId() , "name", userAuthDetails.getName()))
+                .claims(Map.of("id", userAuthDetails.getId(), "name", userAuthDetails.getName()))
                 .header().empty().add("typ", "JWT")
                 .and()
                 .issuedAt(new Date())
@@ -31,12 +33,25 @@ public class JWTUtil {
                 .signWith(key).compact();
     }
 
-    public String validateAndExtractData(String token) {
+    public UserAuthDetails validateAndExtractData(String token) {
         try {
-            return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
+            Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+
+            UserAuthDetails userAuthDetails = new UserAuthDetails();
+            userAuthDetails.setId(claims.get("id", Long.class));
+            userAuthDetails.setName(claims.get("name", String.class));
+            userAuthDetails.setUsername(claims.getSubject());
+            return userAuthDetails;
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
     }
 
+    public String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 }

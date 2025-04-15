@@ -31,8 +31,6 @@ public class UserAuthDetails implements UserDetails {
     @NotBlank
     private String username;
 
-    @NotNull
-    @NotBlank
     private String password;
 
     private Collection<? extends GrantedAuthority> authorities;

@@ -18,53 +18,66 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<FailureResponse> handleHttpMessageNotResponseException(
-            final HttpMessageNotReadableException exception) {
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+        @ExceptionHandler(HttpMessageNotReadableException.class)
+        public ResponseEntity<FailureResponse> handleHttpMessageNotResponseException(
+                        final HttpMessageNotReadableException exception) {
 
-        String errorMessage = "Malformed JSON request";
+                String errorMessage = "Malformed JSON request";
 
-        if (exception.getCause() instanceof InvalidFormatException formatException) {
-            errorMessage = "Invalid value for field - " + formatException.getPath().get(0).getFieldName() + ": "
-                    + formatException.getValue() + " - " + formatException.getOriginalMessage();
+                if (exception.getCause() instanceof InvalidFormatException formatException) {
+                        errorMessage = "Invalid value for field - " + formatException.getPath().get(0).getFieldName()
+                                        + ": "
+                                        + formatException.getValue() + " - " + formatException.getOriginalMessage();
+                }
+
+                return ResponseHandler.failure("Error", "Bad Request",
+                                HttpStatus.BAD_REQUEST, errorMessage, "E002");
         }
 
-        return ResponseHandler.failure("Error", "Bad Request",
-                HttpStatus.BAD_REQUEST, errorMessage, "E002");
-    }
+        // @ResponseStatus(HttpStatus.FORBIDDEN)
+        // @ExceptionHandler()
+        // public ResponseEntity<FailureResponse> handle(
+        // final BadCredentialsException exception) {
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<FailureResponse> handleBadCredentialsException(
-            final BadCredentialsException exception) {
+        // String errorMessage = "Bad Credentials";
 
-        String errorMessage = "Bad Credentials";
+        // return ResponseHandler.failure("Invalid Credentials", "Invalid Credentials",
+        // HttpStatus.UNAUTHORIZED, errorMessage, "E003");
+        // }
 
-        return ResponseHandler.failure("Invalid Credentials", "Invalid Credentials",
-                HttpStatus.UNAUTHORIZED, errorMessage, "E003");
-    }
+        @ResponseStatus(HttpStatus.UNAUTHORIZED)
+        @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<FailureResponse> handleBadCredentialsException(
+                        final BadCredentialsException exception) {
 
-    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<FailureResponse> handleMethodArgumentNotValidException(
-            final MethodArgumentNotValidException exception) {
+                String errorMessage = "Bad Credentials";
 
-        Map<String, String> errors = new HashMap<>();
+                return ResponseHandler.failure("Invalid Credentials", "Invalid Credentials",
+                                HttpStatus.UNAUTHORIZED, errorMessage, "E003");
+        }
 
-        exception.getBindingResult().getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<FailureResponse> handleMethodArgumentNotValidException(
+                        final MethodArgumentNotValidException exception) {
 
-        System.out.println(exception);
+                Map<String, String> errors = new HashMap<>();
 
-        return ResponseHandler.failure("Error", "Validation Error",
-                HttpStatus.UNPROCESSABLE_ENTITY, errors, "E002");
-    }
+                exception.getBindingResult().getFieldErrors()
+                                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<FailureResponse> handleInternalServerException(final Exception exception) {
-        return ResponseHandler.failure("Error", exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null, "E001");
-    }
+                System.out.println(exception);
+
+                return ResponseHandler.failure("Error", "Validation Error",
+                                HttpStatus.UNPROCESSABLE_ENTITY, errors, "E002");
+        }
+
+        @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<FailureResponse> handleInternalServerException(final Exception exception) {
+                return ResponseHandler.failure("Error", exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null,
+                                "E001");
+        }
 
 }
