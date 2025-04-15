@@ -33,4 +33,7 @@ public class TrainSeatModel {
     @NotNull
     @Column(nullable = false)
     private int seatNumber;
+
+    @Column(nullable = false)
+    private boolean isBooked;
 }

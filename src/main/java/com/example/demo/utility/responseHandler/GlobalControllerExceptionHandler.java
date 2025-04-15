@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.example.demo.common.exceptions.ResourceNotFoundException;
 import com.example.demo.utility.responseHandler.responseClasses.FailureResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
@@ -56,6 +57,20 @@ public class GlobalControllerExceptionHandler {
 
                 return ResponseHandler.failure("Invalid Credentials", "Invalid Credentials",
                                 HttpStatus.UNAUTHORIZED, errorMessage, "E003");
+        }
+
+        @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+        @ExceptionHandler(ResourceNotFoundException.class)
+        public ResponseEntity<FailureResponse> handleResourceNotFoundException(
+                        final ResourceNotFoundException exception) {
+
+                String errorMessage = "Resource Not Found";
+
+                return ResponseHandler.failure(
+                                "Resource Not Found",
+                                "Resource Not Found",
+                                HttpStatus.UNPROCESSABLE_ENTITY,
+                                errorMessage, "E004");
         }
 
         @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)

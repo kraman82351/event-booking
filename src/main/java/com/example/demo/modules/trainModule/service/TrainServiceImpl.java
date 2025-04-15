@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entities.train.TrainModel;
 import com.example.demo.entities.train.TrainSeatModel;
@@ -11,8 +12,6 @@ import com.example.demo.modules.trainModule.dto.TrainDto;
 import com.example.demo.modules.trainModule.repository.TrainRepository;
 import com.example.demo.modules.trainModule.response.GetAllTrainsResponse;
 import com.example.demo.modules.trainSeatModule.repository.TrainSeatRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class TrainServiceImpl implements TrainService {
