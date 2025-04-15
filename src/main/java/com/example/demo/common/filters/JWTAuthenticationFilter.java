@@ -5,8 +5,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.demo.common.constants.AppConstants;
 import com.example.demo.modules.userModule.core.UserAuthDetails;
 import com.example.demo.modules.userModule.request.UserLoginRequest;
+import com.example.demo.modules.userModule.utils.AuthCookieUtil;
 import com.example.demo.utility.jwtUtils.JWTUtil;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -15,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -44,29 +45,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 userLoginRequest.getEmail(), userLoginRequest.getPassword());
 
-        Authentication authResult = authenticationManager.authenticate(authToken);
+        Authentication authentication = authenticationManager.authenticate(authToken);
 
-        if (authResult.isAuthenticated()) {
-            int TOKEN_EXPIRATION_TIME = 60; // 1 hour
-            int REFRESH_TOKEN_EXPIRATION_TIME = 7 * 24 * 60; // 7 days
-
-            String token = jwtUtil.generateToken((UserAuthDetails) authResult.getPrincipal(), TOKEN_EXPIRATION_TIME);
-            String refreshToken = jwtUtil.generateToken((UserAuthDetails) authResult.getPrincipal(),
-                    REFRESH_TOKEN_EXPIRATION_TIME);
-
-            Cookie tokenCookie = new Cookie("token", token);
-            tokenCookie.setHttpOnly(true);
-            tokenCookie.setSecure(true);
-            tokenCookie.setMaxAge(TOKEN_EXPIRATION_TIME);
-
-            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setPath("/refresh-token");
-            refreshTokenCookie.setMaxAge(TOKEN_EXPIRATION_TIME);
-
-            response.addCookie(tokenCookie);
-            response.addCookie(refreshTokenCookie);
+        if (authentication.isAuthenticated()) {
+            AuthCookieUtil.generateAndAddAuthCookies((UserAuthDetails) authentication.getPrincipal(), jwtUtil, response,
+                    AppConstants.TOKEN_EXPIRATION_TIME_MINUTES,
+                    AppConstants.REFRESH_TOKEN_EXPIRATION_TIME_MINUTES);
         }
 
     }

@@ -6,22 +6,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.common.constants.AppConstants;
 import com.example.demo.modules.userModule.core.UserAuthDetails;
 import com.example.demo.modules.userModule.request.CreateUserApiRequest;
 import com.example.demo.modules.userModule.request.UserLoginRequest;
 import com.example.demo.modules.userModule.service.UserDetailsServiceImpl;
 import com.example.demo.modules.userModule.service.UserService;
 import com.example.demo.modules.userModule.service.UserServiceImpl;
+import com.example.demo.modules.userModule.utils.AuthCookieUtil;
 import com.example.demo.utility.jwtUtils.JWTUtil;
 import com.example.demo.utility.responseHandler.ResponseHandler;
 import com.example.demo.utility.responseHandler.responseClasses.DataResponse;
 import com.example.demo.utility.responseHandler.responseClasses.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -52,16 +56,17 @@ public class UserAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<DataResponse<Map<String, String>>> logIn(
-            @Valid @RequestBody UserLoginRequest userLoginRequest) {
-        authenticationManager.authenticate(
+            @Valid @RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword()));
 
-        UserAuthDetails userDetails = userDetailsService.loadUserByUsername(userLoginRequest.getEmail());
+        UserAuthDetails userDetails = (UserAuthDetails) authentication.getPrincipal();
 
-        String jwt = jwtUtil.generateToken(userDetails, 10);
+        Map<String, String> tokens = AuthCookieUtil.generateAndAddAuthCookies(userDetails, jwtUtil, response,
+                AppConstants.TOKEN_EXPIRATION_TIME_MINUTES,
+                AppConstants.REFRESH_TOKEN_EXPIRATION_TIME_MINUTES);
 
-        Map<String, String> response = Map.of("jwt", jwt);
-        return ResponseHandler.<Map<String, String>>data(response, HttpStatus.OK);
+        return ResponseHandler.<Map<String, String>>data(tokens, HttpStatus.OK);
     }
 
     @PostMapping("/sign-up")

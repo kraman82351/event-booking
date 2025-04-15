@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,16 +36,16 @@ public class GlobalControllerExceptionHandler {
                                 HttpStatus.BAD_REQUEST, errorMessage, "E002");
         }
 
-        // @ResponseStatus(HttpStatus.FORBIDDEN)
-        // @ExceptionHandler()
-        // public ResponseEntity<FailureResponse> handle(
-        // final BadCredentialsException exception) {
+        @ResponseStatus(HttpStatus.FORBIDDEN)
+        @ExceptionHandler(AuthenticationException.class)
+        public ResponseEntity<FailureResponse> handleAuthenticationException(
+                        final AuthenticationException exception) {
 
-        // String errorMessage = "Bad Credentials";
+                String errorMessage = "Forbidden";
 
-        // return ResponseHandler.failure("Invalid Credentials", "Invalid Credentials",
-        // HttpStatus.UNAUTHORIZED, errorMessage, "E003");
-        // }
+                return ResponseHandler.failure("Forbidden", "Forbidden",
+                                HttpStatus.FORBIDDEN, errorMessage, "E004");
+        }
 
         @ResponseStatus(HttpStatus.UNAUTHORIZED)
         @ExceptionHandler(BadCredentialsException.class)

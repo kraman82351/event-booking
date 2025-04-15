@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.modules.userModule.request.CreateUserApiRequest;
-import com.example.demo.modules.userModule.request.UserLoginRequest;
 import com.example.demo.modules.userModule.request.UserTestApiRequest;
 import com.example.demo.modules.userModule.service.UserService;
 import com.example.demo.modules.userModule.service.UserServiceImpl;

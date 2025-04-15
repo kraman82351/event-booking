@@ -29,6 +29,12 @@ public class JWTValidationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        // Skip token validation
+        if (request.getServletPath().startsWith("/user-auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = jwtUtil.extractJwtFromRequest(request);
 
         if (token != null) {
