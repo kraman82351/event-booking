@@ -5,17 +5,24 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.entities.train.TrainModel;
+import com.example.demo.entities.train.TrainSeatModel;
 import com.example.demo.modules.trainModule.dto.TrainDto;
 import com.example.demo.modules.trainModule.repository.TrainRepository;
 import com.example.demo.modules.trainModule.response.GetAllTrainsResponse;
+import com.example.demo.modules.trainSeatModule.repository.TrainSeatRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class TrainServiceImpl implements TrainService {
 
     private final TrainRepository trainRepository;
+    private final TrainSeatRepository trainSeatRepository;
 
-    public TrainServiceImpl(TrainRepository trainRepository) {
+    public TrainServiceImpl(TrainRepository trainRepository, TrainSeatRepository trainSeatRepository) {
         this.trainRepository = trainRepository;
+        this.trainSeatRepository = trainSeatRepository;
     }
 
     @Override
@@ -29,5 +36,21 @@ public class TrainServiceImpl implements TrainService {
         }).collect(Collectors.toList());
 
         return new GetAllTrainsResponse(trains);
+    }
+
+    @Override
+    @Transactional
+    public void createTrainWithSeats(String name, int seatCount) {
+        TrainModel train = new TrainModel();
+        train.setName(name);
+
+        trainRepository.save(train);
+
+        for (int i = 0; i < seatCount; i++) {
+            TrainSeatModel trainSeat = new TrainSeatModel();
+            trainSeat.setTrain(train);
+            trainSeat.setSeatNumber(i + 1);
+            trainSeatRepository.save(trainSeat);
+        }
     }
 }

@@ -7,35 +7,32 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.entities.train.TrainModel;
 import com.example.demo.modules.trainModule.repository.TrainRepository;
+import com.example.demo.modules.trainModule.service.TrainService;
+import com.example.demo.modules.trainModule.service.TrainServiceImpl;
 
 @Component
 public class TrainDatabaseSeeder implements CommandLineRunner {
 
     private final TrainRepository trainRepository;
+    private final TrainService trainService;
 
-    public TrainDatabaseSeeder(TrainRepository trainRepository) {
+    public TrainDatabaseSeeder(TrainRepository trainRepository, TrainServiceImpl trainService) {
         this.trainRepository = trainRepository;
+        this.trainService = trainService;
     }
 
     @Override
     public void run(String... args) {
-
         upsertTrains("Rajdhani Express");
-        upsertTrains("Shatabdi Express");
-
+        // upsertTrains("Shatabdi Express");
         System.out.println("Train data seeded successfully!");
     }
 
     private void upsertTrains(String trainName) {
-
         Optional<TrainModel> train = trainRepository.findByName(trainName);
 
         if (train.isEmpty()) {
-            TrainModel newTrain = new TrainModel();
-            newTrain.setName(trainName);
-
-            trainRepository.save(newTrain);
+            trainService.createTrainWithSeats(trainName, 10);
         }
-
     }
 }
