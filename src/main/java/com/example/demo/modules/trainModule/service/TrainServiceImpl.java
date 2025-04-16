@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.common.constants.CacheKeys;
 import com.example.demo.entities.train.TrainModel;
 import com.example.demo.entities.train.TrainSeatModel;
 import com.example.demo.modules.trainModule.dto.TrainDto;
@@ -26,7 +27,7 @@ public class TrainServiceImpl implements TrainService {
         this.trainSeatRepository = trainSeatRepository;
     }
 
-    @Cacheable(value = "trainModule", key = "'getAllTrains'")
+    @Cacheable(value = CacheKeys.Train.MODULE, key = CacheKeys.Train.GET_ALL_TRAINS)
     @Override
     public GetAllTrainsResponse getAllTrains() {
         List<TrainDto> trains = trainRepository.findAll().stream().map(train -> {
@@ -42,8 +43,8 @@ public class TrainServiceImpl implements TrainService {
 
     @Override
     @Transactional
-    // @CachePut(value = "trainModule", key = "'getAllTrains'")
-    @CacheEvict(value = "trainModule", key = "'getAllTrains'")
+    // @CachePut(value = CacheKeys.Train.MODULE, key = CacheKeys.Train.GET_ALL_TRAINS)
+    @CacheEvict(value = CacheKeys.Train.MODULE, key = CacheKeys.Train.GET_ALL_TRAINS)
     public void createTrainWithSeats(String name, int seatCount) {
         TrainModel train = new TrainModel();
         train.setName(name);
