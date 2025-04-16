@@ -36,7 +36,7 @@ public class TrainController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<SuccessResponse> postMethodName(@Valid @RequestBody CreateTrainRequest createTrainRequest) {
+    public ResponseEntity<SuccessResponse> createTrainWithSeats(@Valid @RequestBody CreateTrainRequest createTrainRequest) {
         trainService.createTrainWithSeats(createTrainRequest.getName(), createTrainRequest.getNumberOfSeats());
         return ResponseHandler.success("Successfully created train", HttpStatus.CREATED);
     }

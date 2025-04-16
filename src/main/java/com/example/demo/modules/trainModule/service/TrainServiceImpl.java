@@ -3,6 +3,8 @@ package com.example.demo.modules.trainModule.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ public class TrainServiceImpl implements TrainService {
         this.trainSeatRepository = trainSeatRepository;
     }
 
+    @Cacheable(value = "com.example.demo.modules.trainModule.service.getAllTrains", key = "'getAllTrains'")
     @Override
     public GetAllTrainsResponse getAllTrains() {
         List<TrainDto> trains = trainRepository.findAll().stream().map(train -> {
@@ -39,6 +42,8 @@ public class TrainServiceImpl implements TrainService {
 
     @Override
     @Transactional
+    // @CachePut(value = "com.example.demo.modules.trainModule.service.getAllTrains", key = "'getAllTrains'")
+    @CacheEvict(value = "com.example.demo.modules.trainModule.service.getAllTrains", key = "'getAllTrains'")
     public void createTrainWithSeats(String name, int seatCount) {
         TrainModel train = new TrainModel();
         train.setName(name);
