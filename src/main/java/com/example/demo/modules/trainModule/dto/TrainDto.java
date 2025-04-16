@@ -1,5 +1,7 @@
 package com.example.demo.modules.trainModule.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainDto {
+public class TrainDto implements Serializable {
     private String trainId;
     private String name;
 }
