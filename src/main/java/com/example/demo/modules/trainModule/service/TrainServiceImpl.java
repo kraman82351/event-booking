@@ -29,7 +29,7 @@ public class TrainServiceImpl implements TrainService {
 
     @Cacheable(value = CacheKeys.Train.MODULE, key = CacheKeys.Train.GET_ALL_TRAINS)
     @Override
-    public GetAllTrainsResponse getAllTrains() {
+    public synchronized GetAllTrainsResponse getAllTrains() {
         List<TrainDto> trains = trainRepository.findAll().stream().map(train -> {
             TrainDto trainDto = new TrainDto();
             trainDto.setName(train.getName());

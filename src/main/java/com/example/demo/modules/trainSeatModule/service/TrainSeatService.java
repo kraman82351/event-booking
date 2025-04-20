@@ -38,5 +38,4 @@ public class TrainSeatService {
             throw new RuntimeException("Seat is currently being booked by someone else, please try again.");
         }
     }
-
 }

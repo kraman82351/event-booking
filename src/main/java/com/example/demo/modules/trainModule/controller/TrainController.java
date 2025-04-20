@@ -1,5 +1,6 @@
 package com.example.demo.modules.trainModule.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import com.example.demo.utility.responseHandler.responseClasses.SuccessResponse;
 
 import jakarta.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/train")
 public class TrainController {
@@ -30,7 +32,12 @@ public class TrainController {
 
     @GetMapping()
     public ResponseEntity<DataResponse<GetAllTrainsResponse>> getAllTrains() {
+
+        log.info("Received request for get all trains");
+
         GetAllTrainsResponse trains = trainService.getAllTrains();
+
+        log.info("All trains fetched :: " , trains);
 
         return ResponseHandler.data(trains, HttpStatus.OK);
     }
