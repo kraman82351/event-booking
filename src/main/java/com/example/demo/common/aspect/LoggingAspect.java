@@ -26,7 +26,7 @@ public class LoggingAspect {
 
     @Before("execution(* com.example.demo.modules.trainModule..*.*(..))")
     public void logBeforeTrainModule(JoinPoint joinPoint) {
-        logBefore(joinPoint);
+//        logBefore(joinPoint);
     }
 
 }

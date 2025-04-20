@@ -33,18 +33,24 @@ public class TrainController {
     @GetMapping()
     public ResponseEntity<DataResponse<GetAllTrainsResponse>> getAllTrains() {
 
-        log.info("Received request for get all trains");
+        log.info("Received request to get all trains");
 
         GetAllTrainsResponse trains = trainService.getAllTrains();
 
-        log.info("All trains fetched :: " , trains);
+        log.debug("TrainService returned: {}", trains);
+        log.info("Successfully retrieved all trains");
 
         return ResponseHandler.data(trains, HttpStatus.OK);
     }
 
     @PostMapping("create")
     public ResponseEntity<SuccessResponse> createTrainWithSeats(@Valid @RequestBody CreateTrainRequest createTrainRequest) {
+        log.info("Received request to create train with name: {} and number of seats: {}", createTrainRequest.getName(), createTrainRequest.getNumberOfSeats());
+
         trainService.createTrainWithSeats(createTrainRequest.getName(), createTrainRequest.getNumberOfSeats());
+
+        log.info("Successfully created train with name: {}", createTrainRequest.getName());
+
         return ResponseHandler.success("Successfully created train", HttpStatus.CREATED);
     }
 
