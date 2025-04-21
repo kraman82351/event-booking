@@ -1,4 +1,4 @@
-package com.example.demo.modules.externalService.dto;
+package com.example.demo.modules.others.externalService.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

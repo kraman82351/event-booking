@@ -1,8 +1,8 @@
-package com.example.demo.modules.externalService.response;
+package com.example.demo.modules.others.externalService.response;
 
 import java.util.List;
 
-import com.example.demo.modules.externalService.dto.PostsDto;
+import com.example.demo.modules.others.externalService.dto.PostsDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

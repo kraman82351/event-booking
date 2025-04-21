@@ -1,5 +1,5 @@
 // CacheController.java
-package com.example.demo.modules.cache.controller;
+package com.example.demo.modules.others.cache.controller;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.modules.cache.service.CacheInspectionService;
+import com.example.demo.modules.others.cache.service.CacheInspectionService;
 import com.example.demo.utility.responseHandler.ResponseHandler;
 import com.example.demo.utility.responseHandler.responseClasses.DataResponse;
 

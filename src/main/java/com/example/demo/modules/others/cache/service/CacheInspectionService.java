@@ -1,5 +1,5 @@
 // CacheInspectionService.java
-package com.example.demo.modules.cache.service;
+package com.example.demo.modules.others.cache.service;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

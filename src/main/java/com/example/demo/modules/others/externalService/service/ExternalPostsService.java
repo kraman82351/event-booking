@@ -1,4 +1,4 @@
-package com.example.demo.modules.externalService.service;
+package com.example.demo.modules.others.externalService.service;
 
 import java.time.Duration;
 
@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.example.demo.modules.externalService.dto.PostsDto;
-import com.example.demo.modules.externalService.response.GetAllPostsResponse;
+import com.example.demo.modules.others.externalService.dto.PostsDto;
 
 import reactor.util.retry.Retry;
 
