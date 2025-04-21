@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.demo.common.constants.AppConstants;
 import com.example.demo.common.token.JWTAuthenticationToken;
 import com.example.demo.utility.jwtUtils.JWTUtil;
 
@@ -29,10 +30,12 @@ public class JWTValidationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        // Skip token validation
-        if (request.getServletPath().startsWith("/user-auth")) {
-            filterChain.doFilter(request, response);
-            return;
+        String path = request.getServletPath();
+        for (String publicPath : AppConstants.PUBLIC_PATHS) {
+            if (path.startsWith(publicPath.replace("**", ""))) {
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
         String token = jwtUtil.extractJwtFromRequest(request);

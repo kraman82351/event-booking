@@ -14,10 +14,16 @@ import com.example.demo.modules.userModule.service.UserServiceImpl;
 import com.example.demo.utility.responseHandler.ResponseHandler;
 import com.example.demo.utility.responseHandler.responseClasses.SuccessResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("user")
+@Tag(name = "User API", description = "Operations related to user management")
 public class UserController {
 
     private final UserService userService;
@@ -26,7 +32,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping()
+    @Operation(summary = "Hello world test", description = "Simple endpoint to verify controller is up", responses = {
+            @ApiResponse(responseCode = "200", description = "Request successful", content = @Content(schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/hello")
     public ResponseEntity<SuccessResponse> helloWorld() {
         String message = "Hello World!";
         return ResponseHandler.success(message, HttpStatus.OK);

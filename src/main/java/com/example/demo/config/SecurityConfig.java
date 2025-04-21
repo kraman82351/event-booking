@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.demo.common.constants.AppConstants;
 import com.example.demo.common.filters.JWTAuthenticationFilter;
 import com.example.demo.common.filters.JWTValidationFilter;
 import com.example.demo.common.provider.JWTAuthenticationProvider;
@@ -72,8 +73,10 @@ public class SecurityConfig {
 
         return http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(requests -> requests.requestMatchers("/user-auth/**").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(requests -> requests.requestMatchers(AppConstants.PUBLIC_PATHS)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
