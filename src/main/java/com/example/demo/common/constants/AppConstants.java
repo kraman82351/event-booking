@@ -8,8 +8,8 @@ public class AppConstants {
             "/user-auth/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+            "/actuator/**",
             "/swagger-ui.html",
-            "/actuator/**"
     };
 
     public static final String SECURITY_SCHEME_NAME = "bearerAuth";
