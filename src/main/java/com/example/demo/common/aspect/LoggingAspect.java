@@ -1,12 +1,17 @@
 package com.example.demo.common.aspect;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Aspect
 @Component
+@Slf4j
 public class LoggingAspect {
 
     private void logBefore(JoinPoint joinPoint) {
@@ -26,7 +31,6 @@ public class LoggingAspect {
 
     @Before("execution(* com.example.demo.modules.trainModule..*.*(..))")
     public void logBeforeTrainModule(JoinPoint joinPoint) {
-//        logBefore(joinPoint);
+        // logBefore(joinPoint);
     }
-
 }

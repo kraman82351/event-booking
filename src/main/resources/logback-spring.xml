@@ -33,6 +33,4 @@
         <appender-ref ref="Console" />
         <appender-ref ref="RollingFile" />
     </root>
-
-    <logger name="com.example.demo" level="DEBUG" />
 </configuration>

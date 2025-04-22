@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.common.annotations.MeasureExecutionTime;
 import com.example.demo.modules.trainModule.request.CreateTrainRequest;
 import com.example.demo.modules.trainModule.response.GetAllTrainsResponse;
 import com.example.demo.modules.trainModule.service.TrainService;
@@ -31,6 +32,7 @@ public class TrainController {
     }
 
     @GetMapping()
+    @MeasureExecutionTime
     public ResponseEntity<DataResponse<GetAllTrainsResponse>> getAllTrains() {
 
         log.info("Received request to get all trains");
@@ -44,8 +46,10 @@ public class TrainController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<SuccessResponse> createTrainWithSeats(@Valid @RequestBody CreateTrainRequest createTrainRequest) {
-        log.info("Received request to create train with name: {} and number of seats: {}", createTrainRequest.getName(), createTrainRequest.getNumberOfSeats());
+    public ResponseEntity<SuccessResponse> createTrainWithSeats(
+            @Valid @RequestBody CreateTrainRequest createTrainRequest) {
+        log.info("Received request to create train with name: {} and number of seats: {}", createTrainRequest.getName(),
+                createTrainRequest.getNumberOfSeats());
 
         trainService.createTrainWithSeats(createTrainRequest.getName(), createTrainRequest.getNumberOfSeats());
 
