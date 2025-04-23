@@ -19,7 +19,7 @@ public class SchedulerService {
         this.schedulerLogService = schedulerLogService;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void schedulerCronJob() {
         log.info("Logging in scheduler : ", LocalDateTime.now().toString());
         schedulerLogService.log(LocalDateTime.now().toString());

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.common.annotations.MeasureExecutionTime;
 import com.example.demo.modules.trainSeatModule.request.BookTrainSeatRequest;
 import com.example.demo.modules.trainSeatModule.service.TrainSeatService;
 import com.example.demo.modules.userModule.core.UserAuthDetails;
@@ -28,6 +29,7 @@ public class TrainSeatController {
     }
 
     @PostMapping("/book")
+    @MeasureExecutionTime
     public ResponseEntity<SuccessResponse> bookTrainSeat(
             @Valid @RequestBody BookTrainSeatRequest bookTrainSeatRequest) {
 
