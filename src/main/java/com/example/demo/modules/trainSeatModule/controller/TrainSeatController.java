@@ -1,5 +1,7 @@
 package com.example.demo.modules.trainSeatModule.controller;
 
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,7 +33,7 @@ public class TrainSeatController {
     @PostMapping("/book")
     @MeasureExecutionTime
     public ResponseEntity<SuccessResponse> bookTrainSeat(
-            @Valid @RequestBody BookTrainSeatRequest bookTrainSeatRequest) {
+            @Valid @RequestBody BookTrainSeatRequest bookTrainSeatRequest) throws InterruptedException, ExecutionException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
