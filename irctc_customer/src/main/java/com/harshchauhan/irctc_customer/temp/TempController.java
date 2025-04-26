@@ -18,7 +18,6 @@ public class TempController {
 
     @GetMapping()
     public ResponseEntity<Object> otherHealth() {
-        System.out.println("HEREEEE");
         Object temp = webClientBuilder.build().get().uri("http://irctc-core/api/v1/actuator/health").retrieve()
                 .bodyToMono(Object.class).block();
 
@@ -29,16 +28,4 @@ public class TempController {
     public ResponseEntity<String> temp() {
         return ResponseEntity.ok("HI");
     }
-
-    // PostsDto[] getAllPostsResponseEntity = webClient
-    // .get()
-    // .uri("/posts")
-    // .retrieve()
-    // .bodyToMono(PostsDto[].class)
-    // .retryWhen(
-    // Retry.backoff(3, Duration.ofSeconds(1)) // starts with 1s, doubles each time:
-    // 1s → 2s → 4s
-    // .maxBackoff(Duration.ofSeconds(10)) // maximum wait
-    // .jitter(0.3) // optional: adds randomness (30%)
-    // ).block();
 }
