@@ -17,6 +17,7 @@
         <module>irctc_core</module>
         <module>irctc_common</module>
         <module>irctc_config</module>
+        <module>irctc_discovery</module>
     </modules>
 
     <properties>

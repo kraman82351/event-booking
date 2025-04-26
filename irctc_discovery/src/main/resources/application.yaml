@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: irctc_discovery
+  config:
+    import: optional:configserver:http://localhost:8888
+
+
