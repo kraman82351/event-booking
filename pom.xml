@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.harshchauhan</groupId>
-    <artifactId>irctc-parent</artifactId>
+    <artifactId>irctc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     
-    <name>IRCTC Clone - Parent</name>
-    <description>IRCTC Clone Multi-Module Project</description>
+    <name>IRCTC</name>
+    <description>IRCTC</description>
     
     <modules>
         <module>irctc_core</module>
