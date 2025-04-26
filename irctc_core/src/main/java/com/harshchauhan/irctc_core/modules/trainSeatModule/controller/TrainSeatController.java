@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.harshchauhan.irctc_core.common.annotations.MeasureExecutionTime;
 import com.harshchauhan.irctc_core.modules.trainSeatModule.request.BookTrainSeatRequest;
@@ -20,7 +21,7 @@ import com.harshchauhan.irctc_core.utility.responseHandler.responseClasses.Succe
 
 import jakarta.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping("/train-seat")
 public class TrainSeatController {
 
@@ -33,7 +34,8 @@ public class TrainSeatController {
     @PostMapping("/book")
     @MeasureExecutionTime
     public ResponseEntity<SuccessResponse> bookTrainSeat(
-            @Valid @RequestBody BookTrainSeatRequest bookTrainSeatRequest) throws InterruptedException, ExecutionException {
+            @Valid @RequestBody BookTrainSeatRequest bookTrainSeatRequest)
+            throws InterruptedException, ExecutionException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
