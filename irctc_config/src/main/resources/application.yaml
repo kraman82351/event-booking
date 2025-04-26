@@ -2,7 +2,7 @@ spring:
   profiles:
     active: native
   application:
-    name: irctc_config
+    name: irctc-config
   cloud:
     config:
       server:
