@@ -9,10 +9,10 @@
         <version>3.4.4</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>irctc-core</artifactId>
+    <groupId>com.harshchauhan</groupId>
+    <artifactId>irctc_core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
+    <name>IRCTC Clone</name>
     <description>Demo project for Spring Boot</description>
     <url />
     <licenses>
