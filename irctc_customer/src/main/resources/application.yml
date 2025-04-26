@@ -1,5 +1,5 @@
 spring:
   application:
-    name: irctc_discovery
+    name: irctc_customer
   config:
     import: optional:configserver:http://localhost:8888

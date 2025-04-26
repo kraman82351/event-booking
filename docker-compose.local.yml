@@ -1,9 +1,22 @@
 version: "3.8"
 
 services:
-  database:
+  mongo_database:
+    image: mongo
+    container_name: mongo_database
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: irctc
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data
+    networks:
+      - microservices-net
+
+  postgres_database:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres_database
     ports:
       - "25432:5432"
     environment:
@@ -13,7 +26,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - microservices-net
 
   redis:
     image: redis:alpine
@@ -21,31 +34,43 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - app-network
+      - microservices-net
 
-  irctc-be:
-    build: .
-    container_name: irctc-be
+  # irctc-be:
+  #   build: .
+  #   container_name: irctc-be
+  #   ports:
+  #     - "8000:8080"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=uat
+  #     - DB_HOST=postgres-database
+  #     - DB_PORT=5432
+  #     - DB_NAME=postgres
+  #     - DB_USERNAME=admin
+  #     - DB_PASSWORD=password
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #   depends_on:
+  #     - postgres-database
+  #     - redis
+  #   networks:
+  #     - microservices-net
+
+  mongo_express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
     ports:
-      - "8000:8080"
+      - 8081:8081
     environment:
-      - SPRING_PROFILES_ACTIVE=uat
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_NAME=postgres
-      - DB_USERNAME=admin
-      - DB_PASSWORD=password
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - database
-      - redis
-    networks:
-      - app-network
+      ME_CONFIG_MONGODB_ADMINUSERNAME: irctc
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: mongo_database
 
 volumes:
   postgres_data:
+  mongo_data:
 
 networks:
-  app-network:
+  microservices-net:
     driver: bridge
