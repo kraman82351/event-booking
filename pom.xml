@@ -14,8 +14,8 @@
     <description>IRCTC Monorepo</description>
 
     <modules>
-        <module>irctc_core</module>
-        <!-- add more modules later -->
+        <module>apps/irctc_core</module>
+        <module>libs/irctc_common</module>
     </modules>
 
     <properties>
@@ -24,6 +24,8 @@
         <springdoc.version>2.8.6</springdoc.version>
         <jjwt.version>0.12.5</jjwt.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
@@ -35,6 +37,18 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.harshchauhan</groupId>
+                <artifactId>irctc_core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.harshchauhan</groupId>
+                <artifactId>irctc_common</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Your other managed dependencies -->
