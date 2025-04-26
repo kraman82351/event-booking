@@ -7,7 +7,7 @@ RUN ./mvnw clean package -DskipTests
 # Step 2: Run with a lightweight JRE
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/irctc_core/target/*.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
