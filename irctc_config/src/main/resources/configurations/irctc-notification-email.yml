@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      username: irctc
+      password: password
+      host: localhost
+      port: 27017
+      database: irctc_customer
+      authentication-database: admin
+  cloud:
+    discovery:
+      enabled: true
+
+server:
+  port: 8092

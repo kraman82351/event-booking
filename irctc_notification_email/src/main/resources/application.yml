@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: irctc-notification-email
+  config:
+    import: optional:configserver:http://localhost:8888

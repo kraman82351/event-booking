@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.harshchauhan.irctc_core.common.exceptions.ResourceNotFoundException;
 import com.harshchauhan.irctc_core.entities.train.TrainSeatModel;
+import com.harshchauhan.irctc_core.modules.trainSeatModule.dtos.TrainSeatBookingConfirmationDto;
+import com.harshchauhan.irctc_core.modules.trainSeatModule.producer.TrainSeatBookingProducer;
 import com.harshchauhan.irctc_core.modules.trainSeatModule.repository.TrainSeatRepository;
+import com.harshchauhan.irctc_core.modules.userModule.core.UserAuthDetails;
 
 import jakarta.persistence.PessimisticLockException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +24,17 @@ public class TrainSeatService {
 
     private final TrainSeatRepository trainSeatRepository;
     private final TrainSeatAsyncService trainSeatAsyncService;
+    private final TrainSeatBookingProducer trainSeatBookingProducer;
 
-    public TrainSeatService(TrainSeatRepository trainSeatRepository, TrainSeatAsyncService trainSeatAsyncService) {
+    public TrainSeatService(TrainSeatRepository trainSeatRepository, TrainSeatAsyncService trainSeatAsyncService,
+            TrainSeatBookingProducer trainSeatBookingProducer) {
         this.trainSeatRepository = trainSeatRepository;
         this.trainSeatAsyncService = trainSeatAsyncService;
+        this.trainSeatBookingProducer = trainSeatBookingProducer;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void bookSpecificSeat(Long userId, String trainId, int seatNumber)
+    public void bookSpecificSeat(UserAuthDetails userId, String trainId, int seatNumber)
             throws InterruptedException, ExecutionException {
         try {
             CompletableFuture<String> trainSeatAsyncTask = trainSeatAsyncService.asyncTask();
@@ -46,6 +52,10 @@ public class TrainSeatService {
             String asyncTrainSeatTaskMessage = trainSeatAsyncTask.get();
 
             log.info("\n\n\nTASK COMPLETED :::: {}", asyncTrainSeatTaskMessage);
+
+            trainSeatBookingProducer
+                    .sendTrainBookingConfirmation(
+                            new TrainSeatBookingConfirmationDto(trainId, seatNumber, userId.getUsername()));
 
         } catch (PessimisticLockException | CannotAcquireLockException e) {
             throw new RuntimeException("Seat is currently being booked by someone else, please try again.");

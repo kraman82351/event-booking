@@ -19,6 +19,7 @@
         <module>irctc_config</module>
         <module>irctc_discovery</module>
         <module>irctc_customer</module>
+        <module>irctc_notification_email</module>
     </modules>
 
     <properties>
