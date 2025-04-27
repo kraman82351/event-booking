@@ -20,6 +20,7 @@
         <module>irctc_discovery</module>
         <module>irctc_customer</module>
         <module>irctc_notification_email</module>
+        <module>irctc_api_gateway</module>
     </modules>
 
     <properties>
@@ -36,7 +37,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot BOM -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
