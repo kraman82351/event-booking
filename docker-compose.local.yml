@@ -36,26 +36,6 @@ services:
     networks:
       - microservices-net
 
-  # irctc-be:
-  #   build: .
-  #   container_name: irctc-be
-  #   ports:
-  #     - "8000:8080"
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=uat
-  #     - DB_HOST=postgres-database
-  #     - DB_PORT=5432
-  #     - DB_NAME=postgres
-  #     - DB_USERNAME=admin
-  #     - DB_PASSWORD=password
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #   depends_on:
-  #     - postgres-database
-  #     - redis
-  #   networks:
-  #     - microservices-net
-
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -81,21 +61,42 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
     networks:
       - microservices-net
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices-net
 
+  ################### MICROSERVICES ###################
+  # irctc-be:
+  #   build: .
+  #   container_name: irctc-be
+  #   ports:
+  #     - "8000:8080"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=uat
+  #     - DB_HOST=postgres-database
+  #     - DB_PORT=5432
+  #     - DB_NAME=postgres
+  #     - DB_USERNAME=admin
+  #     - DB_PASSWORD=password
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #   depends_on:
+  #     - postgres-database
+  #     - redis
+  #   networks:
+  #     - microservices-net
+
+  ################### DEVELOPMENT INFRA ###################
   mail-dev:
     container_name: mail-dev
     image: maildev/maildev
     ports:
       - 1080:1080
       - 1025:1025
-    networks:
-      - microservices-net
-
-  zipkin:
-    container_name: zipkin
-    image: openzipkin/zipkin
-    ports:
-      - "9411:9411"
     networks:
       - microservices-net
 
