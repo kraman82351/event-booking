@@ -3,6 +3,8 @@ spring:
     name: irctc-api-gateway
   config:
     import: optional:configserver:http://localhost:8888
+  profiles:
+    active: dev
 
 management:
   tracing:
