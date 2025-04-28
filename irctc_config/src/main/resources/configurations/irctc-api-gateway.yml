@@ -19,7 +19,7 @@ spring:
             - RewritePath=/api/v1/customer/(?<path>.*), /$\{path}
 
 server:
-  port: 8010
+  port: 8080
 
 logging:
   level:
