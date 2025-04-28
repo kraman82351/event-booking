@@ -9,33 +9,18 @@
 		<groupId>com.harshchauhan</groupId>
 		<artifactId>irctc</artifactId>
 		<version>${revision}</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<groupId>com.harshchauhan</groupId>
-	<artifactId>irctc_api_gateway</artifactId>
-	<name>irctc_api_gateway</name>
-	<description>API Gateway for IRCTC</description>
+	<artifactId>irctc_discovery</artifactId>
+	<name>irctc_discovery</name>
+	<description>IRCTC Discovery Server</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.harshchauhan</groupId>
 			<artifactId>irctc_common</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-tracing-bridge-brave</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.zipkin.reporter2</groupId>
-			<artifactId>zipkin-reporter-brave</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<dependency>
@@ -45,13 +30,7 @@
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway</artifactId>
-			<version>4.1.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
 
 		<dependency>

@@ -14,13 +14,13 @@
     <description>IRCTC Monorepo</description>
 
     <modules>
-        <module>irctc_core</module>
-        <module>irctc_common</module>
-        <module>irctc_config</module>
-        <module>irctc_discovery</module>
-        <module>irctc_customer</module>
-        <module>irctc_notification_email</module>
-        <module>irctc_api_gateway</module>
+        <module>libs/irctc_common</module>
+        <module>apps/irctc_core</module>
+        <module>apps/irctc_config</module>
+        <module>apps/irctc_discovery</module>
+        <module>apps/irctc_customer</module>
+        <module>apps/irctc_notification_email</module>
+        <module>apps/irctc_api_gateway</module>
     </modules>
 
     <properties>

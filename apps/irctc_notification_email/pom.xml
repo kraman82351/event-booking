@@ -8,7 +8,7 @@
 		<groupId>com.harshchauhan</groupId>
 		<artifactId>irctc</artifactId>
 		<version>${revision}</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<groupId>com.harshchauhan</groupId>
