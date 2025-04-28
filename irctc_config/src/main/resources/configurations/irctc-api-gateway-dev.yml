@@ -1,0 +1,27 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: irctc-core
+          uri: lb:http://IRCTC-CORE
+          predicates:
+            - Path=/api/v1/core/**
+          filters:
+            - RewritePath=/api/v1/core/(?<path>.*), /$\{path}
+        - id: irctc-customer
+          uri: lb:http://IRCTC-CUSTOMER
+          predicates:
+            - Path=/api/v1/customer/**
+          filters:
+            - RewritePath=/api/v1/customer/(?<path>.*), /$\{path}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
