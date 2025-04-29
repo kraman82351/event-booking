@@ -1,6 +1,6 @@
 eureka:
   instance:
-    hostname: localhost
+    hostname: ${DISCOVERY_SERVICE_HOST:localhost}
   client:
     register-with-eureka: false
     fetch-registry: false
@@ -8,4 +8,4 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}/${server.port}/eureka/
 
 server:
-  port: 8762
+  port: ${DISCOVERY_SERVICE_PORT:8761}

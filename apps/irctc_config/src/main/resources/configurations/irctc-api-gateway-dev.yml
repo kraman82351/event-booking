@@ -6,13 +6,13 @@ spring:
           enabled: true
       routes:
         - id: irctc-core
-          uri: lb:http://IRCTC-CORE
+          uri: lb:http://${IRCTC_CORE_SERVICE_HOST:IRCTC-CORE}
           predicates:
             - Path=/api/v1/core/**
           filters:
             - RewritePath=/api/v1/core/(?<path>.*), /$\{path}
         - id: irctc-customer
-          uri: lb:http://IRCTC-CUSTOMER
+          uri: lb:http://${IRCTC_CUSTOMER_SERVICE_HOST:IRCTC-CUSTOMER}
           predicates:
             - Path=/api/v1/customer/**
           filters:

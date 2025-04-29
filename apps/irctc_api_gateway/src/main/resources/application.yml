@@ -2,7 +2,7 @@ spring:
   application:
     name: irctc-api-gateway
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://${CONFIG_SERVICE_HOST:localhost}:${CONFIG_SERVICE_PORT:8888}
   profiles:
     active: dev
 

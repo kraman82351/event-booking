@@ -1,4 +1,4 @@
-# Located at ./apps/irctc_core/Dockerfile
+# Located at ./apps/irctc_notification_email/Dockerfile
 
 # Step 1: Builder image
 FROM eclipse-temurin:21-jdk AS builder
@@ -26,7 +26,7 @@ RUN chmod +x ./mvnw
 
 # Build the specific application module (and its dependencies)
 # Maven automatically builds dependencies like irctc_common first.
-RUN ./mvnw clean package -pl apps/irctc_core -am -Drevision=${REVISION} -DskipTests
+RUN ./mvnw clean package -pl apps/irctc_notification_email -am -Drevision=${REVISION} -DskipTests
 # '-am' also builds required dependencies
 
 # Step 2: Runtime image
@@ -35,7 +35,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy the executable JAR created by spring-boot-maven-plugin
-COPY --from=builder /build/apps/irctc_core/target/*.jar app.jar
+COPY --from=builder /build/apps/irctc_notification_email/target/*.jar app.jar
 
 EXPOSE 8080
 

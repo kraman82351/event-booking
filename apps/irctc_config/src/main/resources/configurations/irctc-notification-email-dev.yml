@@ -1,18 +1,18 @@
 spring:
   data:
     mongodb:
-      username: irctc
-      password: password
-      host: localhost
-      port: 27017
-      database: irctc_customer
-      authentication-database: admin
+      host: ${MONGO_1_DB_HOST:localhost}
+      port: ${MONGO_1_DB_PORT:27017}
+      database: ${MONGO_1_DB_NAME:irctc_customer}
+      username: ${MONGO_1_DB_USERNAME:irctc}
+      password: ${MONGO_1_DB_PASSWORD:password}
+      authentication-database: ${MONGO_1_DB_AUTH_DATABASE:admin}
   cloud:
     discovery:
       enabled: true
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: http://${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
       group-id: trainSeatBookingGroup
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -21,8 +21,8 @@ spring:
         spring.json.trusted.packages: "*"
         spring.json.type.mapping: trainSeatBookingConfirmation:com.harshchauhan.irctc_notification_email.kafka.dto.TrainSeatBookingConfirmationDto
   mail:
-    host: localhost
-    port: 1025
+    host: ${MAIL_DEV_HOST:localhost}
+    port: ${MAIL_DEV_SMTP_PORT:1025}
     username: irctc_temp
     password: irctc_temp
     properties:
@@ -37,4 +37,4 @@ spring:
         writetimeout: 5000
 
 server:
-  port: 8092
+  port: ${IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT:9002}

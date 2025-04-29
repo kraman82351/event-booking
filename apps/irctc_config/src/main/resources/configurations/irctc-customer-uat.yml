@@ -1,15 +1,15 @@
 spring:
   data:
     mongodb:
-      username: irctc
-      password: password
-      host: localhost
-      port: 27017
-      database: irctc_customer
-      authentication-database: admin
+      host: ${MONGO_1_DB_HOST:localhost}
+      port: ${MONGO_1_DB_PORT:27017}
+      database: ${MONGO_1_DB_NAME:irctc_customer}
+      username: ${MONGO_1_DB_USERNAME:irctc}
+      password: ${MONGO_1_DB_PASSWORD:password}
+      authentication-database: ${MONGO_1_DB_AUTH_DATABASE:admin}
   cloud:
     discovery:
       enabled: true
 
 server:
-  port: 8090
+  port: ${IRCTC_CUSTOMER_SERVICE_PORT:9001}
