@@ -1,11 +1,24 @@
 version: "3.8"
 
 services:
-  database:
+  mongo_database:
+    image: mongo
+    container_name: mongo_database
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: irctc
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data
+    networks:
+      - microservices-net
+
+  postgres_database:
     image: postgres:15
-    container_name: postgres_db
-    # ports:
-    #   - "25432:5432"
+    container_name: postgres_database
+    ports:
+      - "25432:5432"
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -13,39 +26,279 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - microservices-net
 
   redis:
     image: redis:alpine
     container_name: redis_db
-    # ports:
-    #   - "6379:6379"
-    networks:
-      - app-network
-
-  irctc-be:
-    build: .
-    container_name: irctc-be
     ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=uat
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_NAME=postgres
-      - DB_USERNAME=admin
-      - DB_PASSWORD=password
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - database
-      - redis
+      - "6379:6379"
     networks:
-      - app-network
+      - microservices-net
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - microservices-net
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    # ports:
+    #   - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    networks:
+      - microservices-net
+
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices-net
+
+  ################### MICROSERVICES ###################
+
+  irctc-config:
+    container_name: irctc-config
+    build:
+      context: .
+      dockerfile: ./apps/irctc_config/Dockerfile
+      args:
+        - REVISION=0.0.1-SNAPSHOT
+    environment:
+      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 100
+    depends_on:
+      - postgres_database
+      - redis
+      - kafka
+    networks:
+      - microservices-net
+
+  irctc-discovery:
+    container_name: irctc-discovery
+    build:
+      context: .
+      dockerfile: ./apps/irctc_discovery/Dockerfile
+      args:
+        - REVISION=0.0.1-SNAPSHOT
+    ports:
+      - 8761:8761
+    environment:
+      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 100
+    depends_on:
+      irctc-config:
+        condition: service_healthy
+    networks:
+      - microservices-net
+
+  irctc-api-gateway:
+    container_name: irctc-api-gateway
+    build:
+      context: .
+      dockerfile: ./apps/irctc_api_gateway/Dockerfile
+      args:
+        - REVISION=0.0.1-SNAPSHOT
+    ports:
+      - 8080:8080
+    environment:
+      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+      - IRCTC_CORE_SERVICE_HOST=${IRCTC_CORE_SERVICE_HOST}
+      - IRCTC_CUSTOMER_SERVICE_HOST=${IRCTC_CUSTOMER_SERVICE_HOST}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 100
+    depends_on:
+      irctc-config:
+        condition: service_healthy
+      irctc-discovery:
+        condition: service_healthy
+    networks:
+      - microservices-net
+
+  irctc-core:
+    container_name: irctc-core
+    build:
+      context: .
+      dockerfile: ./apps/irctc_core/Dockerfile
+      args:
+        - REVISION=0.0.1-SNAPSHOT
+    environment:
+      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+      - POSTGRES_1_DB_HOST=${POSTGRES_1_DB_HOST}
+      - POSTGRES_1_DB_PORT=${POSTGRES_1_DB_PORT}
+      - POSTGRES_1_DB_NAME=${POSTGRES_1_DB_NAME}
+      - POSTGRES_1_DB_USERNAME=${POSTGRES_1_DB_USERNAME}
+      - POSTGRES_1_DB_PASSWORD=${POSTGRES_1_DB_PASSWORD}
+      - REDIS_1_HOST=${REDIS_1_HOST}
+      - REDIS_1_PORT=${REDIS_1_PORT}
+      - KAFKA_HOST=${KAFKA_HOST}
+      - KAFKA_PORT=${KAFKA_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 100
+    depends_on:
+      irctc-config:
+        condition: service_healthy
+      irctc-discovery:
+        condition: service_healthy
+    networks:
+      - microservices-net
+
+  irctc-customer:
+    container_name: irctc-customer
+    build:
+      context: .
+      dockerfile: ./apps/irctc_customer/Dockerfile
+      args:
+        - REVISION=0.0.1-SNAPSHOT
+    environment:
+      - IRCTC_CUSTOMER_SERVICE_PORT=${IRCTC_CUSTOMER_SERVICE_PORT}
+      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+      - MONGO_1_DB_HOST=${MONGO_1_DB_HOST}
+      - MONGO_1_DB_PORT=${MONGO_1_DB_PORT}
+      - MONGO_1_DB_NAME=${MONGO_1_DB_NAME}
+      - MONGO_1_DB_USERNAME=${MONGO_1_DB_USERNAME}
+      - MONGO_1_DB_PASSWORD=${MONGO_1_DB_PASSWORD}
+      - MONGO_1_DB_AUTH_DATABASE=${MONGO_1_DB_AUTH_DATABASE}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 100
+    depends_on:
+      irctc-config:
+        condition: service_healthy
+      irctc-discovery:
+        condition: service_healthy
+    networks:
+      - microservices-net
+  
+  irctc-notification-email:
+    container_name: irctc-notification-email
+    build:
+      context: .
+      dockerfile: ./apps/irctc_notification_email/Dockerfile
+      args:
+        - REVISION=0.0.1-SNAPSHOT
+    environment:
+      - IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT=${IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT}
+      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+      - MONGO_1_DB_HOST=${MONGO_1_DB_HOST}
+      - MONGO_1_DB_PORT=${MONGO_1_DB_PORT}
+      - MONGO_1_DB_NAME=${MONGO_1_DB_NAME}
+      - MONGO_1_DB_USERNAME=${MONGO_1_DB_USERNAME}
+      - MONGO_1_DB_PASSWORD=${MONGO_1_DB_PASSWORD}
+      - MONGO_1_DB_AUTH_DATABASE=${MONGO_1_DB_AUTH_DATABASE}
+      - KAFKA_HOST=${KAFKA_HOST}
+      - KAFKA_PORT=${KAFKA_PORT}
+      - MAIL_DEV_HOST=${MAIL_DEV_HOST}
+      - MAIL_DEV_SMTP_PORT=${MAIL_DEV_SMTP_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9002/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 100
+    depends_on:
+      irctc-config:
+        condition: service_healthy
+      irctc-discovery:
+        condition: service_healthy
+
+    networks:
+      - microservices-net
+      
+  ################### DEVELOPMENT INFRA ###################
+
+  mail-dev:
+    container_name: mail-dev
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+    networks:
+      - microservices-net
+
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    ports:
+      - 5173:8080
+    environment:
+      KAFKA_BROKERS: kafka:9092
+    depends_on:
+      - kafka
+    networks:
+      - microservices-net
+
+  mongo_express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: irctc
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: mongo
+    networks:
+      - microservices-net
 
 volumes:
   postgres_data:
+  mongo_data:
 
 networks:
-  app-network:
+  microservices-net:
     driver: bridge

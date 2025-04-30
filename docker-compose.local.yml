@@ -261,6 +261,7 @@ services:
       - microservices-net
       
   ################### DEVELOPMENT INFRA ###################
+
   mail-dev:
     container_name: mail-dev
     image: maildev/maildev
