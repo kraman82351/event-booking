@@ -1,6 +1,7 @@
 eureka:
   instance:
     hostname: ${DISCOVERY_SERVICE_HOST:localhost}
+    preferIpAddress: true
   client:
     register-with-eureka: false
     fetch-registry: false

@@ -1,6 +1,7 @@
 eureka:
   instance:
     hostname: ${DISCOVERY_SERVICE_HOST:localhost}
+    preferIpAddress: true
   client:
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${DISCOVERY_SERVICE_PORT:8761}/eureka/
