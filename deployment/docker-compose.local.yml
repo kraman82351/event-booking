@@ -79,194 +79,194 @@ services:
 
   ################### MICROSERVICES ###################
 
-  irctc-config:
-    container_name: irctc-config
-    build:
-      context: ../
-      dockerfile: ./apps/irctc_config/Dockerfile
-      args:
-        - REVISION=0.0.1-SNAPSHOT
-    environment:
-      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
-      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
-      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
-      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
-      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
-      interval: 5s
-      timeout: 10s
-      retries: 100
-    depends_on:
-      - postgres_database
-      - redis
-      - kafka
-    networks:
-      - microservices-net
+  # irctc-config:
+  #   container_name: irctc-config
+  #   build:
+  #     context: ../
+  #     dockerfile: ./apps/irctc_config/Dockerfile
+  #     args:
+  #       - REVISION=0.0.1-SNAPSHOT
+  #   environment:
+  #     - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+  #     - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+  #     - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+  #     - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+  #     - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   depends_on:
+  #     - postgres_database
+  #     - redis
+  #     - kafka
+  #   networks:
+  #     - microservices-net
 
-  irctc-discovery:
-    container_name: irctc-discovery
-    build:
-      context: ../
-      dockerfile: ./apps/irctc_discovery/Dockerfile
-      args:
-        - REVISION=0.0.1-SNAPSHOT
-    ports:
-      - 8761:8761
-    environment:
-      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
-      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-      interval: 5s
-      timeout: 10s
-      retries: 100
-    depends_on:
-      irctc-config:
-        condition: service_healthy
-    networks:
-      - microservices-net
+  # irctc-discovery:
+  #   container_name: irctc-discovery
+  #   build:
+  #     context: ../
+  #     dockerfile: ./apps/irctc_discovery/Dockerfile
+  #     args:
+  #       - REVISION=0.0.1-SNAPSHOT
+  #   ports:
+  #     - 8761:8761
+  #   environment:
+  #     - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+  #     - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   depends_on:
+  #     irctc-config:
+  #       condition: service_healthy
+  #   networks:
+  #     - microservices-net
 
-  irctc-api-gateway:
-    container_name: irctc-api-gateway
-    build:
-      context: ../
-      dockerfile: ./apps/irctc_api_gateway/Dockerfile
-      args:
-        - REVISION=0.0.1-SNAPSHOT
-    ports:
-      - 8080:8080
-    environment:
-      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
-      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
-      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
-      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
-      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
-      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
-      - IRCTC_CORE_SERVICE_HOST=${IRCTC_CORE_SERVICE_HOST}
-      - IRCTC_CUSTOMER_SERVICE_HOST=${IRCTC_CUSTOMER_SERVICE_HOST}
-      - IRCTC_API_GATEWAY_SERVICE_PORT=${IRCTC_API_GATEWAY_SERVICE_PORT}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 5s
-      timeout: 10s
-      retries: 100
-    depends_on:
-      irctc-config:
-        condition: service_healthy
-      irctc-discovery:
-        condition: service_healthy
-    networks:
-      - microservices-net
+  # irctc-api-gateway:
+  #   container_name: irctc-api-gateway
+  #   build:
+  #     context: ../
+  #     dockerfile: ./apps/irctc_api_gateway/Dockerfile
+  #     args:
+  #       - REVISION=0.0.1-SNAPSHOT
+  #   ports:
+  #     - 8080:8080
+  #   environment:
+  #     - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+  #     - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+  #     - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+  #     - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+  #     - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+  #     - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+  #     - IRCTC_CORE_SERVICE_HOST=${IRCTC_CORE_SERVICE_HOST}
+  #     - IRCTC_CUSTOMER_SERVICE_HOST=${IRCTC_CUSTOMER_SERVICE_HOST}
+  #     - IRCTC_API_GATEWAY_SERVICE_PORT=${IRCTC_API_GATEWAY_SERVICE_PORT}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   depends_on:
+  #     irctc-config:
+  #       condition: service_healthy
+  #     irctc-discovery:
+  #       condition: service_healthy
+  #   networks:
+  #     - microservices-net
 
-  irctc-core:
-    container_name: irctc-core
-    build:
-      context: ../
-      dockerfile: ./apps/irctc_core/Dockerfile
-      args:
-        - REVISION=0.0.1-SNAPSHOT
-    environment:
-      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
-      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
-      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
-      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
-      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
-      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
-      - POSTGRES_1_DB_HOST=${POSTGRES_1_DB_HOST}
-      - POSTGRES_1_DB_PORT=${POSTGRES_1_DB_PORT}
-      - POSTGRES_1_DB_NAME=${POSTGRES_1_DB_NAME}
-      - POSTGRES_1_DB_USERNAME=${POSTGRES_1_DB_USERNAME}
-      - POSTGRES_1_DB_PASSWORD=${POSTGRES_1_DB_PASSWORD}
-      - REDIS_1_HOST=${REDIS_1_HOST}
-      - REDIS_1_PORT=${REDIS_1_PORT}
-      - KAFKA_HOST=${KAFKA_HOST}
-      - KAFKA_PORT=${KAFKA_PORT}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
-      interval: 5s
-      timeout: 10s
-      retries: 100
-    depends_on:
-      irctc-config:
-        condition: service_healthy
-      irctc-discovery:
-        condition: service_healthy
-    networks:
-      - microservices-net
+  # irctc-core:
+  #   container_name: irctc-core
+  #   build:
+  #     context: ../
+  #     dockerfile: ./apps/irctc_core/Dockerfile
+  #     args:
+  #       - REVISION=0.0.1-SNAPSHOT
+  #   environment:
+  #     - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+  #     - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+  #     - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+  #     - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+  #     - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+  #     - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+  #     - POSTGRES_1_DB_HOST=${POSTGRES_1_DB_HOST}
+  #     - POSTGRES_1_DB_PORT=${POSTGRES_1_DB_PORT}
+  #     - POSTGRES_1_DB_NAME=${POSTGRES_1_DB_NAME}
+  #     - POSTGRES_1_DB_USERNAME=${POSTGRES_1_DB_USERNAME}
+  #     - POSTGRES_1_DB_PASSWORD=${POSTGRES_1_DB_PASSWORD}
+  #     - REDIS_1_HOST=${REDIS_1_HOST}
+  #     - REDIS_1_PORT=${REDIS_1_PORT}
+  #     - KAFKA_HOST=${KAFKA_HOST}
+  #     - KAFKA_PORT=${KAFKA_PORT}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   depends_on:
+  #     irctc-config:
+  #       condition: service_healthy
+  #     irctc-discovery:
+  #       condition: service_healthy
+  #   networks:
+  #     - microservices-net
 
-  irctc-customer:
-    container_name: irctc-customer
-    build:
-      context: ../
-      dockerfile: ./apps/irctc_customer/Dockerfile
-      args:
-        - REVISION=0.0.1-SNAPSHOT
-    environment:
-      - IRCTC_CUSTOMER_SERVICE_PORT=${IRCTC_CUSTOMER_SERVICE_PORT}
-      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
-      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
-      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
-      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
-      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
-      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
-      - MONGO_1_DB_HOST=${MONGO_1_DB_HOST}
-      - MONGO_1_DB_PORT=${MONGO_1_DB_PORT}
-      - MONGO_1_DB_NAME=${MONGO_1_DB_NAME}
-      - MONGO_1_DB_USERNAME=${MONGO_1_DB_USERNAME}
-      - MONGO_1_DB_PASSWORD=${MONGO_1_DB_PASSWORD}
-      - MONGO_1_DB_AUTH_DATABASE=${MONGO_1_DB_AUTH_DATABASE}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
-      interval: 5s
-      timeout: 10s
-      retries: 100
-    depends_on:
-      irctc-config:
-        condition: service_healthy
-      irctc-discovery:
-        condition: service_healthy
-    networks:
-      - microservices-net
+  # irctc-customer:
+  #   container_name: irctc-customer
+  #   build:
+  #     context: ../
+  #     dockerfile: ./apps/irctc_customer/Dockerfile
+  #     args:
+  #       - REVISION=0.0.1-SNAPSHOT
+  #   environment:
+  #     - IRCTC_CUSTOMER_SERVICE_PORT=${IRCTC_CUSTOMER_SERVICE_PORT}
+  #     - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+  #     - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+  #     - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+  #     - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+  #     - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+  #     - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+  #     - MONGO_1_DB_HOST=${MONGO_1_DB_HOST}
+  #     - MONGO_1_DB_PORT=${MONGO_1_DB_PORT}
+  #     - MONGO_1_DB_NAME=${MONGO_1_DB_NAME}
+  #     - MONGO_1_DB_USERNAME=${MONGO_1_DB_USERNAME}
+  #     - MONGO_1_DB_PASSWORD=${MONGO_1_DB_PASSWORD}
+  #     - MONGO_1_DB_AUTH_DATABASE=${MONGO_1_DB_AUTH_DATABASE}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   depends_on:
+  #     irctc-config:
+  #       condition: service_healthy
+  #     irctc-discovery:
+  #       condition: service_healthy
+  #   networks:
+  #     - microservices-net
   
-  irctc-notification-email:
-    container_name: irctc-notification-email
-    build:
-      context: ../
-      dockerfile: ./apps/irctc_notification_email/Dockerfile
-      args:
-        - REVISION=0.0.1-SNAPSHOT
-    environment:
-      - IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT=${IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT}
-      - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
-      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
-      - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
-      - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
-      - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
-      - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
-      - MONGO_1_DB_HOST=${MONGO_1_DB_HOST}
-      - MONGO_1_DB_PORT=${MONGO_1_DB_PORT}
-      - MONGO_1_DB_NAME=${MONGO_1_DB_NAME}
-      - MONGO_1_DB_USERNAME=${MONGO_1_DB_USERNAME}
-      - MONGO_1_DB_PASSWORD=${MONGO_1_DB_PASSWORD}
-      - MONGO_1_DB_AUTH_DATABASE=${MONGO_1_DB_AUTH_DATABASE}
-      - KAFKA_HOST=${KAFKA_HOST}
-      - KAFKA_PORT=${KAFKA_PORT}
-      - MAIL_DEV_HOST=${MAIL_DEV_HOST}
-      - MAIL_DEV_SMTP_PORT=${MAIL_DEV_SMTP_PORT}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9002/actuator/health"]
-      interval: 5s
-      timeout: 10s
-      retries: 100
-    depends_on:
-      irctc-config:
-        condition: service_healthy
-      irctc-discovery:
-        condition: service_healthy
+  # irctc-notification-email:
+  #   container_name: irctc-notification-email
+  #   build:
+  #     context: ../
+  #     dockerfile: ./apps/irctc_notification_email/Dockerfile
+  #     args:
+  #       - REVISION=0.0.1-SNAPSHOT
+  #   environment:
+  #     - IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT=${IRCTC_NOTIFICATION_EMAIL_SERVICE_PORT}
+  #     - CONFIG_SERVICE_HOST=${CONFIG_SERVICE_HOST}
+  #     - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
+  #     - DISCOVERY_SERVICE_HOST=${DISCOVERY_SERVICE_HOST}
+  #     - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
+  #     - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
+  #     - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+  #     - MONGO_1_DB_HOST=${MONGO_1_DB_HOST}
+  #     - MONGO_1_DB_PORT=${MONGO_1_DB_PORT}
+  #     - MONGO_1_DB_NAME=${MONGO_1_DB_NAME}
+  #     - MONGO_1_DB_USERNAME=${MONGO_1_DB_USERNAME}
+  #     - MONGO_1_DB_PASSWORD=${MONGO_1_DB_PASSWORD}
+  #     - MONGO_1_DB_AUTH_DATABASE=${MONGO_1_DB_AUTH_DATABASE}
+  #     - KAFKA_HOST=${KAFKA_HOST}
+  #     - KAFKA_PORT=${KAFKA_PORT}
+  #     - MAIL_DEV_HOST=${MAIL_DEV_HOST}
+  #     - MAIL_DEV_SMTP_PORT=${MAIL_DEV_SMTP_PORT}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9002/actuator/health"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   depends_on:
+  #     irctc-config:
+  #       condition: service_healthy
+  #     irctc-discovery:
+  #       condition: service_healthy
 
-    networks:
-      - microservices-net
+  #   networks:
+  #     - microservices-net
       
   ################### DEVELOPMENT INFRA ###################
 
