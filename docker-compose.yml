@@ -18,7 +18,7 @@ services:
     image: postgres:15
     container_name: postgres_database
     ports:
-      - "25432:5432"
+      - 5432:5432
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -32,7 +32,9 @@ services:
     image: redis:alpine
     container_name: redis_db
     ports:
-      - "6379:6379"
+      - 6379:6379
+    volumes:
+      - redis_data:/data
     networks:
       - microservices-net
 
@@ -60,14 +62,18 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     networks:
       - microservices-net
+
+  ################### TRACING ###################
 
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
     ports:
-      - "9411:9411"
+      - 9411:9411
     networks:
       - microservices-net
 
@@ -85,6 +91,7 @@ services:
       - DISCOVERY_SERVICE_PORT=${DISCOVERY_SERVICE_PORT}
       - TRACING_SERVICE_HOST=${TRACING_SERVICE_HOST}
       - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
+      - CONFIG_SERVICE_PORT=${CONFIG_SERVICE_PORT}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
       interval: 5s
@@ -138,6 +145,7 @@ services:
       - TRACING_SERVICE_PORT=${TRACING_SERVICE_PORT}
       - IRCTC_CORE_SERVICE_HOST=${IRCTC_CORE_SERVICE_HOST}
       - IRCTC_CUSTOMER_SERVICE_HOST=${IRCTC_CUSTOMER_SERVICE_HOST}
+      - IRCTC_API_GATEWAY_SERVICE_PORT=${IRCTC_API_GATEWAY_SERVICE_PORT}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 5s
@@ -263,7 +271,6 @@ services:
   ################### DEVELOPMENT INFRA ###################
 
   mail-dev:
-    container_name: mail-dev
     image: maildev/maildev
     ports:
       - 1080:1080
@@ -284,20 +291,36 @@ services:
 
   mongo_express:
     image: mongo-express
-    container_name: mongo_express
-    restart: always
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: irctc
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password
-      ME_CONFIG_MONGODB_SERVER: mongo
+      - ME_CONFIG_MONGODB_SERVER=${MONGO_1_DB_HOST}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_1_DB_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_1_DB_PASSWORD}
+      - ME_CONFIG_BASICAUTH="false"
     networks:
       - microservices-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres_database
+    networks:
+      - microservices-net
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
   mongo_data:
+  redis_data:
+  kafka_data:
+  pgadmin_data:
 
 networks:
   microservices-net:

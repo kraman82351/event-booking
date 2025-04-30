@@ -3,7 +3,7 @@
 # Step 1: Builder image
 FROM eclipse-temurin:21-jdk AS builder
 
-ARG REVISION=0.0.1-SNAPSHOT # Use ARG for build-time variable
+ARG REVISION=0.0.1-SNAPSHOT
 
 WORKDIR /build
 
