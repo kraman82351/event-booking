@@ -82,7 +82,7 @@ services:
   irctc-config:
     container_name: irctc-config
     build:
-      context: .
+      context: ../
       dockerfile: ./apps/irctc_config/Dockerfile
       args:
         - REVISION=0.0.1-SNAPSHOT
@@ -107,7 +107,7 @@ services:
   irctc-discovery:
     container_name: irctc-discovery
     build:
-      context: .
+      context: ../
       dockerfile: ./apps/irctc_discovery/Dockerfile
       args:
         - REVISION=0.0.1-SNAPSHOT
@@ -130,7 +130,7 @@ services:
   irctc-api-gateway:
     container_name: irctc-api-gateway
     build:
-      context: .
+      context: ../
       dockerfile: ./apps/irctc_api_gateway/Dockerfile
       args:
         - REVISION=0.0.1-SNAPSHOT
@@ -162,7 +162,7 @@ services:
   irctc-core:
     container_name: irctc-core
     build:
-      context: .
+      context: ../
       dockerfile: ./apps/irctc_core/Dockerfile
       args:
         - REVISION=0.0.1-SNAPSHOT
@@ -198,7 +198,7 @@ services:
   irctc-customer:
     container_name: irctc-customer
     build:
-      context: .
+      context: ../
       dockerfile: ./apps/irctc_customer/Dockerfile
       args:
         - REVISION=0.0.1-SNAPSHOT
@@ -232,7 +232,7 @@ services:
   irctc-notification-email:
     container_name: irctc-notification-email
     build:
-      context: .
+      context: ../
       dockerfile: ./apps/irctc_notification_email/Dockerfile
       args:
         - REVISION=0.0.1-SNAPSHOT
