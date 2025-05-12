@@ -1,16 +1,18 @@
 version: "3.8"
 
 services:
+  ################### DATABASES ###################
+
   mongo_database:
     image: mongo
     container_name: mongo_database
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: irctc
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_1_DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_1_DB_PASSWORD}
     volumes:
-      - mongo_data:/data
+      - mongo_data:/data/db
     networks:
       - microservices-net
 
@@ -20,13 +22,18 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_1_DB_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_1_DB_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_1_DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - microservices-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_1_DB_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:alpine
@@ -37,6 +44,8 @@ services:
       - redis_data:/data
     networks:
       - microservices-net
+
+  ################### MESSAGE BROKER ###################
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -50,13 +59,10 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
-    # ports:
-    #   - 9092:9092
     depends_on:
       - zookeeper
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -228,7 +234,7 @@ services:
         condition: service_healthy
     networks:
       - microservices-net
-  
+
   irctc-notification-email:
     container_name: irctc-notification-email
     build:
@@ -264,11 +270,10 @@ services:
         condition: service_healthy
       irctc-discovery:
         condition: service_healthy
-
     networks:
       - microservices-net
-      
-  ################### DEVELOPMENT INFRA ###################
+
+  ################### DEV TOOLS ###################
 
   mail-dev:
     image: maildev/maildev
@@ -310,10 +315,10 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
       - postgres_database
-    networks:
-      - microservices-net
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - microservices-net
 
 volumes:
   postgres_data:
