@@ -24,6 +24,16 @@ management:
       show-details: always
 
 resilience4j:
+  retry:
+    instances:
+      irctcCoreRetry:
+        maxAttempts: 3
+        waitDuration: 1s
+        retryExceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.net.ConnectException
+          - java.io.IOException
+          - java.lang.RuntimeException
   circuitbreaker:
     instances:
       irctcCoreCircuitBreaker:
