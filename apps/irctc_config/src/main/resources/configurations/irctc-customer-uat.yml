@@ -11,5 +11,34 @@ spring:
     discovery:
       enabled: true
 
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: resilience4j.circuitbreakers,health,info
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      irctcCoreCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+
 server:
   port: ${IRCTC_CUSTOMER_SERVICE_PORT:9001}
